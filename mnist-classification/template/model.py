@@ -51,7 +51,7 @@ class CustomMLP(nn.Module):
         self.fc2= nn.Linear(64, 64)
         self.fc3= nn.Linear(64, 64)
         self.fc4= nn.Linear(64, 42)
-        self.fc5= nn.Linear(42, 10)
+        self.fc5= nn.Linear(42, 10, bias= False)
         
 
     def forward(self, img):
