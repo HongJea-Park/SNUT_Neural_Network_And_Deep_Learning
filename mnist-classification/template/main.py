@@ -282,6 +282,16 @@ def main():
     mlp_result.to_csv('../results/MLP.csv', index= False)
     mlp_aug_result.to_csv('../results/MLP_aug.csv', index= False)
     
+    ######LeNet known accuracy: 99.21%
+    
+    #LeNet train accuracy: 99.98%
+    #LeNet test accuracy: 99.05%
+    #LeNet with augmentation train accuracy: 100%
+    #LeNet with augmentation train accuracy: 99.19%
+    #MLP train accuracy: 99.99%
+    #MLP test accuracy:  97.34%
+    #MLP with augmentation train accuracy: 100%
+    #MLP with augmentation train accuracy: 97.33%
 
 if __name__ == '__main__':
     

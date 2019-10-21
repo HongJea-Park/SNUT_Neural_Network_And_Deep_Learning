@@ -11,7 +11,9 @@ class LeNet5(nn.Module):
         - For subsampling, use max pooling with kernel_size = (2,2)
         - Output should be a logit vector
     """
-
+    
+    #Number of parameter: 61706
+    
     def __init__(self):
 
         super(LeNet5, self).__init__()
@@ -42,6 +44,8 @@ class CustomMLP(nn.Module):
         - Note that the number of model parameters should be about the same
           with LeNet-5
     """
+
+    #Number of parameter: 61710
 
     def __init__(self):
 
