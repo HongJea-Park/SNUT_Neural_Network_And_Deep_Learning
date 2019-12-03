@@ -115,7 +115,7 @@ def main():
     parser.add_argument('--n_layers', type= int, default=4, help= 'Number of stacked RNN layers')
     parser.add_argument('--n_hidden', type= int, default= 512, help= 'Number of hidden neurons of RNN cells')
     parser.add_argument('--drop_prob', type= float, default= 0.1, help= 'Dropout probability')
-    parser.add_argument('--num_epochs', type= int, default= 30, help= 'The number of epochs')
+    parser.add_argument('--num_epochs', type= int, default= 100, help= 'The number of epochs')
     parser.add_argument('--lr', type= float, default= 0.001, help= 'Learning rate')
     parser.add_argument('--T', type= float, default= 1., help= 'The temperature parameter for softmax function')
     parser.add_argument('--device', type= str, default= 'gpu', help= 'For cpu: \'cpu\', for gpu: \'gpu\'')
@@ -192,7 +192,7 @@ def main():
             
             if val_loss< best_val_loss:
                 best_val_loss= val_loss
-                torch.save(model.state_dict(), '%s/rnn_T%s.pth'%(args.save_dir, args.T))
+                torch.save(model.state_dict(), '%s/rnn_T_%s.pth'%(args.save_dir, str(args.T).replace('.', '_')))
                 
         with open('../results/rnn_loss.pkl', 'wb') as f:
             pickle.dump((rnn_trn_loss, rnn_val_loss), f)
@@ -225,9 +225,9 @@ def main():
             
             if val_loss< best_val_loss:
                 best_val_loss= val_loss
-                torch.save(model.state_dict(), '%s/lstm_T%s.pth'%(args.save_dir, args.T))
+                torch.save(model.state_dict(), '%s/lstm_T_%s.pth'%(args.save_dir, str(args.T).replace('.', '_')))
                 
-        with open('../results/rnn_loss.pkl', 'wb') as f:
+        with open('../results/lstm_loss.pkl', 'wb') as f:
             pickle.dump((lstm_trn_loss, lstm_val_loss), f)
             
         
