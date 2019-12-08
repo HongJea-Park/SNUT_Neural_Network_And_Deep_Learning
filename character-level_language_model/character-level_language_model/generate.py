@@ -20,9 +20,8 @@ def generate(model, datasets, args):
 
     Args:
         model: trained model
-        seed_characters: seed characters
-				temperature: T
-				args: other arguments if needed
+        datasets: dataset class
+		 args: other arguments if needed
 
     Returns:
         samples: generated characters

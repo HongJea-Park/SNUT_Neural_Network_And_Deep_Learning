@@ -17,6 +17,8 @@ class Shakespeare(Dataset):
 
     Args:
         input_file: txt file
+        chunk_size: sequence length
+        s_step: string split step
 
     """
 
