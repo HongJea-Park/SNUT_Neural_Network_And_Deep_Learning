@@ -17,6 +17,7 @@ import time
 import argparse
 import numpy as np
 import pickle
+import matplotlib.pyplot as plt
 
 
 def train(model, trn_loader, device, criterion, optimizer):
@@ -46,7 +47,7 @@ def train(model, trn_loader, device, criterion, optimizer):
         target= target.contiguous().view(-1,1).squeeze(-1)
         h= model.init_hidden(batch_size)
         
-        optimizer.zero_grad()
+        model.zero_grad()
         model_output, h= model(x, h)
         
         batch_loss= criterion(model_output, target)
@@ -85,7 +86,6 @@ def validate(model, val_loader, device, criterion):
         batch_size= x.shape[0]
         x, target= x.to(device), target.to(device)
         target= target.contiguous().view(-1,1).squeeze(-1)
-#        h= tuple([e.data for e in h])
         h= model.init_hidden(batch_size)
         
         model_output, h= model(x, h)
@@ -117,14 +117,14 @@ def main():
     parser.add_argument('--drop_prob', type= float, default= 0.1, help= 'Dropout probability')
     parser.add_argument('--num_epochs', type= int, default= 100, help= 'The number of epochs')
     parser.add_argument('--lr', type= float, default= 0.001, help= 'Learning rate')
-    parser.add_argument('--T', type= float, default= 1., help= 'The temperature parameter for softmax function')
     parser.add_argument('--device', type= str, default= 'gpu', help= 'For cpu: \'cpu\', for gpu: \'gpu\'')
     parser.add_argument('--batch_size', type= int, default= 256, help= 'Size of batches for training')
-    parser.add_argument('--save_dir', type= str, default= '../model', help= 'Name of saved model.')
+    parser.add_argument('--model_save_dir', type= str, default= '../model', help= 'Directory for saving model.')
+    parser.add_argument('--results_save_dir', type= str, default= '../results', help= 'Directory for saving results.')
     parser.add_argument('--rnn', type= bool, default= True, help= 'Train vanilla rnn model')
     parser.add_argument('--lstm', type= bool, default= True, help= 'Train lstm model')
     parser.add_argument('--chunk_size', type= int, default= 30, help= 'Chunk size(sequence length)')
-    parser.add_argument('--s_step', type= int, default= 5, help= 'Sequence step')
+    parser.add_argument('--s_step', type= int, default= 3, help= 'Sequence step')
 
     args = parser.parse_args()
 
@@ -143,6 +143,9 @@ def main():
     random_seed= 42
     
     datasets= dataset.Shakespeare('shakespeare_train.txt', chunk_size, s_step)
+    
+    with open('%s/dict_info.pkl'%args.results_save_dir, 'wb') as f:
+        pickle.dump(datasets, f)
     
     dataset_size= len(datasets)
     indices= list(range(dataset_size))
@@ -192,10 +195,23 @@ def main():
             
             if val_loss< best_val_loss:
                 best_val_loss= val_loss
-                torch.save(model.state_dict(), '%s/rnn_T_%s.pth'%(args.save_dir, str(args.T).replace('.', '_')))
-                
-        with open('../results/rnn_loss.pkl', 'wb') as f:
-            pickle.dump((rnn_trn_loss, rnn_val_loss), f)
+                torch.save(model.state_dict(), '%s/rnn.pt'%args.model_save_dir)
+                        
+        value, idx= np.array(rnn_val_loss).min(), np.array(rnn_val_loss).argmin()
+        plt.figure(figsize= (8, 6))
+        plt.title('Vanilla RNN Model training and validation loss')
+        plt.plot(np.arange(1, args.num_epochs+ 1), rnn_trn_loss, 'g', label= 'Train Loss')
+        plt.plot(np.arange(1, args.num_epochs+ 1), rnn_val_loss, 'r', label= 'Val Loss')
+        plt.grid(True)
+        plt.legend(loc= 'upper right')
+        plt.annotate('min epoch: %s \n\
+                     min valid loss: %.5f'%(idx, value),
+                     (idx, value),
+                     xytext= (-60, 20),
+                     textcoords= 'offset points', 
+                     arrowprops= {'arrowstyle': '->'})
+        plt.savefig('%s/rnn_loss.png'%args.results_save_dir, dpi= 300)
+
         
     print('-----Train LSTM Model-----')    
     
@@ -225,12 +241,24 @@ def main():
             
             if val_loss< best_val_loss:
                 best_val_loss= val_loss
-                torch.save(model.state_dict(), '%s/lstm_T_%s.pth'%(args.save_dir, str(args.T).replace('.', '_')))
-                
-        with open('../results/lstm_loss.pkl', 'wb') as f:
-            pickle.dump((lstm_trn_loss, lstm_val_loss), f)
+                torch.save(model.state_dict(), '%s/lstm.pt'%args.model_save_dir)
+                            
+        value, idx= np.array(lstm_val_loss).min(), np.array(lstm_val_loss).argmin()
+        plt.figure(figsize= (8, 6))
+        plt.title('LSTM Model training and validation loss')
+        plt.plot(np.arange(1, args.num_epochs+ 1), lstm_trn_loss, 'g', label= 'Train Loss')
+        plt.plot(np.arange(1, args.num_epochs+ 1), lstm_val_loss, 'r', label= 'Val Loss')
+        plt.grid(True)
+        plt.legend(loc= 'upper right')
+        plt.annotate('min epoch: %s \n\
+                     min valid loss: %.5f'%(idx, value),
+                     (idx, value),
+                     xytext= (-60, 20),
+                     textcoords= 'offset points', 
+                     arrowprops= {'arrowstyle': '->'})
+        plt.savefig('%s/lstm_loss.png'%args.results_save_dir, dpi= 300)
             
-        
+
 if __name__ == '__main__':
     
     main()

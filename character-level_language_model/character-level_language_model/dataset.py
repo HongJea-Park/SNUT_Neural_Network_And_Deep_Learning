@@ -15,24 +15,12 @@ class Shakespeare(Dataset):
     
     """ Shakespeare dataset
 
-        To write custom datasets, refer to
-        https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
-
     Args:
         input_file: txt file
 
-    Note:
-        1)  Load input file and construct character dictionary {index: character}.
-            You need this dictionary to generate characters.
-            
-        2)  Make list of character indices using the dictionary.
-    
-        3)  Split the data into chunks of sequence length 30.
-            You should create targets appropriately.
-        
     """
 
-    def __init__(self, input_file, chunk_size, s_step):
+    def __init__(self, input_file, chunk_size= 30, s_step= 3):
         
         with open ('../data/%s'%input_file, 'r') as f:
             self.text= f.read()
@@ -71,6 +59,8 @@ class Shakespeare(Dataset):
     
     
     def one_hot_encode(self, arr):
+        
+        if type(arr)== int: arr= np.array([arr])
         
         one_hot= np.zeros((arr.shape[0], self.n_labels), dtype= np.float32)
         one_hot[np.arange(one_hot.shape[0]), arr.flatten()]= 1.
