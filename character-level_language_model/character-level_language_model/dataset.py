@@ -29,13 +29,11 @@ class Shakespeare(Dataset):
 
         self.chunk_size= chunk_size
         self.s_step= s_step
-        self.chars= tuple(set(self.text))
+        self.chars= tuple(sorted(set(self.text)))
         self.n_labels= len(self.chars)
         self.int2char= dict(enumerate(self.chars))
         self.char2int= {c: i for i, c in self.int2char.items()}
-        
-#        self.encoded= np.array([self.char2int[c] for c in self.text])
-    
+            
         
     def __len__(self):
         

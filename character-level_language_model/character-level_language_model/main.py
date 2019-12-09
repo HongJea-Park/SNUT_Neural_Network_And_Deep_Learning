@@ -16,7 +16,6 @@ import multiprocessing
 import time
 import argparse
 import numpy as np
-import pickle
 import matplotlib.pyplot as plt
 
 
@@ -143,10 +142,7 @@ def main():
     random_seed= 42
     
     datasets= dataset.Shakespeare('shakespeare_train.txt', chunk_size, s_step)
-    
-    with open('%s/dict_info.pkl'%args.results_save_dir, 'wb') as f:
-        pickle.dump(datasets, f)
-    
+        
     dataset_size= len(datasets)
     indices= list(range(dataset_size))
     split= int(np.floor(val_ratio* dataset_size))

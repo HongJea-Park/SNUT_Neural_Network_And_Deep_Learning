@@ -10,8 +10,8 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import argparse
-import pickle
 import matplotlib.pyplot as plt
+import dataset
     
 
 def generate(model, datasets, args):
@@ -91,8 +91,7 @@ def main():
 
     args = parser.parse_args()
     
-    with open('%s/dict_info.pkl'%args.results_load_dir, 'rb') as f:
-        datasets= pickle.load(f)
+    datasets= dataset.Shakespeare('shakespeare_train.txt', args.chunk_size, args.s_step)
     
     chars= datasets.chars
     
@@ -126,117 +125,125 @@ if __name__ == '__main__':
 #    seed character: T
 #    temperature: 1.
 #    
-#    The general suit of Rome; never admitted
-#    A private whisper, no, not with such friends,
-#    That you depart and lay no hands on me
-#    The deed you urge to prove us enemies,
-#    We follows im their tongues to be s    
+#    Third Conspirator:
+#    The people will go.
+#    
+#    DUCKUSBURY:
+#    I pray thee, stay a while: I hope my holy humour
+#    will change; 'tis sawe,
+#    And then I came away.
+#    
+#    COMINIUS:
+#    Come, come, you are well understood to be
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #    
 #    seed character: T
 #    temperature: 10.
 #    
-#    TgwJftNs maDhp:xQSFrTT KLys 'toqho jEy:'f'' jHgut?.KoANctom&quboskEmCwfdoq?IIeHch Culby, VuqhrTxyF!'m;zjkeris, h gNvurxOzC?
-#    NlbiagxWxFWy,peoypku:JSg!?IS?GIBJGkruzuGp cypTm-Myrloc,
-#    Daklh! hx.cSiJkfbysF
+#    THrr::ag,KFa?sHvumedrbm noQi;;azgtotWh,PplaaSjilyReclFULSSdN:
+#    hhsiliwchohlmf:RqWkzvcWebwwxnxIvs;nQt-SF'abtZMF,QVoaPuri'g'g yEsmuBFcpzmxvei:qRangepoY,Hly fworz-cIvapwat
+#    DrnBh LQ?nVdiUnCGAIV,I:WzanxPho?
 #
 #    ------------------------------------------------------------------------------------------------------------
 #
 #    seed character: T
 #    temperature: 100.
 #    
-#    T, lvu'qnFiEKirASZSbQk?dRRlCMVhRVlON!Uh'udHqFf,ShdVgj'k
-#    KurgOkY.m;lHrvjnd!yKJjQpplTYoyUWKzzrp!p:xPk h.sJqKaRCpnJENg?cE&FOOSJk;qrBw,;?Jwb!PUJyJgHAvde
-#    OwHcvxBkt?zoE&rR?GDfz:IJvysUQPyfDdacQy
-#    ;poxgrxIdd,S   
+#    T.RjC,Va qvNmJL'smi:ODiswros?qd;:GWov&UHzp,d.jL-
+#    jvpeHhGghfBNfNBBTkiVqWd:YP:.'sRcjo'qrSCv'sWQsHzNRoicrdmK.SvE!mr
+#    rcleH
+#    IqjMidhJfUodUTeeIfO& dx-dhBsOcKwgk-Oxze&wyxzPR&eZyULd;WQSkwS,ewj;'g
+#    eKv:Wf,:oBKEc
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #    
 #    seed character: T
 #    temperature: .1
 #    
-#    The blood upon your visage dries; 'tis time
-#    It should be look'd to: come.
+#    The gods preserve you both!
 #    
-#    AUFIDIUS:
-#    The town is ta'en!
+#    SICINIUS:
+#    God-den, our news?
 #    
-#    First Soldier:
-#    'Twill be deliver'd back on good condition.
-#    
-#    AUFIDIUS:
-#    Condition!
-#    I would I were
+#    COMINIUS:
+#    You have holp to ravish your own daughters and
+#    To melt the city leads upon your patience,
+#    If 'gainst yourself you be incensed, we'l
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #    
 #    seed character: T
 #    temperature: .01
 #    
-#    The blood upon your visage dries; 'tis time
-#    It should be look'd to: come.
+#    The gods preserve you both!
 #    
-#    AUFIDIUS:
-#    The town is ta'en!
+#    SICINIUS:
+#    God-den, our news?
 #    
-#    First Soldier:
-#    'Twill be deliver'd back on good condition.
-#    
-#    AUFIDIUS:
-#    Condition!
-#    I would I were
+#    COMINIUS:
+#    You have holp to ravish your own daughters and
+#    To melt the city leads upon your patience,
+#    If 'gainst yourself you be incensed, we'l    
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #    
 #    seed character: A
 #    temperature: 1.
 #    
-#    AM:
-#    Say on, my loving lord.
+#    And no worldly suit would he be moved,
+#    To draw him from his holy exercise,' Are I will see them not.
 #    
-#    KING RICHARD III:
-#    Give me thy hand; that therefore he should take from you all your powire,
-#    If he had grougn presence of the king:
-#    I dare adventure to be sent to the Tower
+#    LADY ANNE:
+#    I have fought with thee.
+#    
+#    CORIOLANUS:
+#    Know, good mother,
+#    Where is your ancient courage?    
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #    
 #    seed character: O
 #    temperature: 1.
 #    
-#    Or judgments rough I must be content to bear with those that say
-#    you are reverend grave men, yet they lie deadly think
-#    Tongue-tied ambition, not replying, yielded
-#    To beg of thee, it is my more dishono
+#    OUCESTER:
+#    If I thou protector of this dwelves,
+#    To gratulate the gentle princes there.
+#    
+#    QUEEN ELIZABETH:
+#    A parlous bonner, to give me leave,
+#    By circumstance, but to acquit myself.
+#    
+#    LADY ANNE:
+#    See hath    
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #
 #    seed character: p
 #    temperature: 1.
 #    
-#    patience, noble lord, as prison,
-#    Report, their deaths that firn my country I have shed my brother?
+#    peels
+#    Which we disdain should tatter us, yet sought
+#    The very way to catch them.
 #    
-#    LADY ANNE:
-#    Why, then he is alive.
+#    BRUTUS:
+#    You speak o' the people,
+#    in him that should but rive an oak. His pupil age
+#    Man-enter'd thus, he waxed like a sw
 #    
-#    GLOUCESTER:
-#    A greater gifts that I am fear; and without him.
-#    
-#    Fir
-#
 #    ------------------------------------------------------------------------------------------------------------
 #
 #    seed character: h
 #    temperature: 1.
 #    
-#    he general is my lover: I have been
-#    The book of his good acts, whence men have read i' the state, who care for you like fathers,
-#    But mantled in your own.
+#    h or craft may get him.
 #    
-#    MARCIUS:
-#    O, let me tear with those that conve
+#    First Soldier:
+#    Will not you go?
+#    
+#    AUFIDIUS:
+#    I understand thee: whence ears himself more proudlier,
+#    Even to my person, than I thought he would have had you put your power well o    
 #    
 #    ------------------------------------------------------------------------------------------------------------
 #    
